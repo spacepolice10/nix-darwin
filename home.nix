@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   home.username = "spcpolice";
@@ -23,11 +23,11 @@
       enableBashIntegration = true;
 
       settings = {
-        font-size = 16;
+        font-size = 15;
         font-family = "FiraCode Nerd Font";
         cursor-style = "block";
         unfocused-split-opacity = 0.88;
-        split-divider-color = "#222222";
+        split-divider-color = "#FFF222";
         window-decoration = "none";
         keybind = [
           "ctrl+cmd+h=goto_split:left"
@@ -101,4 +101,10 @@
     enable = true;
     nix-direnv.enable = true;
   };
+
+  home.activation.cloneLazyVim = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    if [ ! -d ~/.config/nvim ]; then
+      git clone https://github.com/LazyVim/starter ~/.config/nvim
+    fi
+  '';
 }
