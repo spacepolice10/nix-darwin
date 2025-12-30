@@ -38,8 +38,8 @@
           "ctrl+cmd+m=toggle_split_zoom"
           "ctrl+cmd+shift+h=resize_split:left,360"
           "ctrl+cmd+shift+l=resize_split:right,360"
-          "ctrl+cmd+shift+j=resize_split:up, 225"
-          "ctrl+cmd+shift+j=resize_split:down, 225"
+          "ctrl+cmd+shift+k=resize_split:up,225"
+          "ctrl+cmd+shift+j=resize_split:down,225"
         ];
        };
   };

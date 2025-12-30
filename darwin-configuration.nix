@@ -22,7 +22,7 @@
     TrackpadThreeFingerDrag = true;
   };
   system.defaults.screencapture = {
-    target = "clipboard"
+    target = "clipboard";
   };
   system.defaults.NSGlobalDomain."com.apple.trackpad.scaling" = 2.5;
   launchd.user.agents.aerospace = {
