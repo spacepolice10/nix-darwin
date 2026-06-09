@@ -37,7 +37,7 @@
     };
     casks = [
       "claude-code"
-      "cursor-cli"
+      "codex"
       "firefox"
       "google-chrome"
     ];

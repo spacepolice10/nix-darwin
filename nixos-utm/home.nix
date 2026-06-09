@@ -62,7 +62,6 @@
     syntaxHighlighting.enable = true;
 
     shellAliases = {
-      ls = "eza -a";
       ll = "eza -l";
       la = "eza -TL 2 -a --icons";
       tree = "eza --tree";
@@ -74,6 +73,11 @@
     };
 
     initContent = ''
+      # Keep automation stable (Cursor agent uses zsh too): only alias ls for real interactive use.
+      if [[ -o interactive ]] && [[ -z "''${CURSOR_AGENT:-}" ]]; then
+        alias -- ls='eza -a'
+      fi
+
       # Report current directory to tmux via OSC 7 for #{pane_current_path}
       autoload -Uz add-zsh-hook
       _osc7_cwd() { printf '\033]7;file://%s%s\033\\' "$HOST" "$PWD"; }

@@ -17,9 +17,9 @@
     fd
     eza
     bat
+    opencode
     tailspin
     raycast
-    opencode
     _1password-cli
     _1password-gui
     nerd-fonts.fira-code
@@ -37,7 +37,6 @@
       cursor-style = "block";
       unfocused-split-opacity = 0.88;
       split-divider-color = "#222222";
-      window-decoration = "none";
       window-padding-balance = false;
       macos-option-as-alt = true;
       keybind = [
@@ -60,7 +59,6 @@
     syntaxHighlighting.enable = true;
 
     shellAliases = {
-      ls = "eza -a";
       ll = "eza -l";
       la = "eza -TL 2 -a --icons";
       tree = "eza --tree";
@@ -72,6 +70,11 @@
     };
 
     initContent = ''
+      # Keep automation stable (Cursor agent uses zsh too): only alias ls for real interactive use.
+      if [[ -o interactive ]] && [[ -z "''${CURSOR_AGENT:-}" ]]; then
+        alias -- ls='eza -a'
+      fi
+
       # Report current directory to tmux via OSC 7 for #{pane_current_path}
       autoload -Uz add-zsh-hook
       _osc7_cwd() { printf '\033]7;file://%s%s\033\\' "$HOST" "$PWD"; }
@@ -178,73 +181,73 @@
   };
 
   xdg.configFile."zsh/mux.zsh".text = ''
-        # mx-cc: claude (left) | empty terminal (top-right) / hx (bottom-right)
-        mx-cc() {
-          local dir name
-          if [ -n "''${1}" ]; then
-            dir=$(zoxide query "''${1}") || return 1
-            name="''${1}"
-          else
-            dir="$PWD"
-            name=$(basename "$dir")
-          fi
-          if [ -z "$TMUX" ]; then
-            tmux new-session -s "$name" -n "$name" -c "$dir" \; \
-              split-window -h -c "$dir" \; \
-              split-window -v -c "$dir" \; \
-              send-keys "hx ." Enter \; \
-              select-pane -U \; \
-              select-pane -L \; \
-              send-keys "claude" Enter \; \
-              select-pane -R
-            return
-          fi
-          tmux rename-window "$name"
-          tmux kill-pane -a
-          tmux send-keys "cd $(printf '%q' "$dir") && clear" Enter
-          tmux split-window -h -c "$dir"
-          tmux split-window -v -c "$dir"
-          tmux send-keys "hx ." Enter
-          tmux select-pane -U
-          tmux select-pane -L
-          tmux send-keys "claude" Enter
-          tmux select-pane -R
-        }
+    # mx-cc: claude (left) | empty terminal (top-right) / hx (bottom-right)
+    mx-cc() {
+      local dir name
+      if [ -n "''${1}" ]; then
+        dir=$(zoxide query "''${1}") || return 1
+        name="''${1}"
+      else
+        dir="$PWD"
+        name=$(basename "$dir")
+      fi
+      if [ -z "$TMUX" ]; then
+        tmux new-session -s "$name" -n "$name" -c "$dir" \; \
+          split-window -h -c "$dir" \; \
+          split-window -v -c "$dir" \; \
+          send-keys "hx ." Enter \; \
+          select-pane -U \; \
+          select-pane -L \; \
+          send-keys "claude" Enter \; \
+          select-pane -R
+        return
+      fi
+      tmux rename-window "$name"
+      tmux kill-pane -a
+      tmux send-keys "cd $(printf '%q' "$dir") && clear" Enter
+      tmux split-window -h -c "$dir"
+      tmux split-window -v -c "$dir"
+      tmux send-keys "hx ." Enter
+      tmux select-pane -U
+      tmux select-pane -L
+      tmux send-keys "claude" Enter
+      tmux select-pane -R
+    }
 
-        # mx-agents: 4 claude instances in a 2x2 grid
-        mx-agents() {
-          local dir name
-          if [ -n "''${1}" ]; then
-            dir=$(zoxide query "''${1}") || return 1
-            name="''${1}"
-          else
-            dir="$PWD"
-            name=$(basename "$dir")
-          fi
-          if [ -z "$TMUX" ]; then
-            tmux new-session -s "$name" -n "$name" -c "$dir" \; \
-              send-keys "claude" Enter \; \
-              split-window -h -c "$dir" \; \
-              send-keys "claude" Enter \; \
-              split-window -v -c "$dir" \; \
-              send-keys "claude" Enter \; \
-              select-pane -L \; \
-              split-window -v -c "$dir" \; \
-              send-keys "claude" Enter
-            return
-          fi
-          tmux rename-window "$name"
-          tmux kill-pane -a
-          tmux send-keys "cd $(printf '%q' "$dir") && clear" Enter
-          tmux send-keys "claude" Enter
-          tmux split-window -h -c "$dir"
-          tmux send-keys "claude" Enter
-          tmux split-window -v -c "$dir"
-          tmux send-keys "claude" Enter
-          tmux select-pane -L
-          tmux split-window -v -c "$dir"
-          tmux send-keys "claude" Enter
-        }
+    # mx-agents: 4 claude instances in a 2x2 grid
+    mx-agents() {
+      local dir name
+      if [ -n "''${1}" ]; then
+        dir=$(zoxide query "''${1}") || return 1
+        name="''${1}"
+      else
+        dir="$PWD"
+        name=$(basename "$dir")
+      fi
+      if [ -z "$TMUX" ]; then
+        tmux new-session -s "$name" -n "$name" -c "$dir" \; \
+          send-keys "claude" Enter \; \
+          split-window -h -c "$dir" \; \
+          send-keys "claude" Enter \; \
+          split-window -v -c "$dir" \; \
+          send-keys "claude" Enter \; \
+          select-pane -L \; \
+          split-window -v -c "$dir" \; \
+          send-keys "claude" Enter
+        return
+      fi
+      tmux rename-window "$name"
+      tmux kill-pane -a
+      tmux send-keys "cd $(printf '%q' "$dir") && clear" Enter
+      tmux send-keys "claude" Enter
+      tmux split-window -h -c "$dir"
+      tmux send-keys "claude" Enter
+      tmux split-window -v -c "$dir"
+      tmux send-keys "claude" Enter
+      tmux select-pane -L
+      tmux split-window -v -c "$dir"
+      tmux send-keys "claude" Enter
+    }
   '';
 
   programs.difftastic = {
